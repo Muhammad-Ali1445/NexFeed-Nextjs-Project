@@ -13,10 +13,10 @@ async function dbConnect() {
   }
   try {
     const db = await mongoose.connect(process.env.MONGODB || "");
-    console.log("Log Db", db);
+    // console.log("Log Db", db);
 
     connection.isConnected = db.connections[0].readyState;
-    console.log("Log connections", db.connections);
+    // console.log("Log connections", db.connections);
     console.log("DB connected SuccessFullly");
   } catch (error) {
     console.log("Db connection Failed", error);
