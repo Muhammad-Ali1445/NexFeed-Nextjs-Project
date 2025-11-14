@@ -74,8 +74,10 @@ const SignInPage = () => {
     try {
       const response = await axios.post<ApiResponse>(`/api/sign-up`, data);
       // if (response.data.success) {
-      toast.success("User Registered Successfully",{style:{backgroundColor:"#08CB00" ,color: "white"}})
-      
+      toast.success("User Registered Successfully", {
+        style: { backgroundColor: "#08CB00", color: "white" },
+      });
+
       router.replace(`/verify/${username}`);
       setIsSubmitting(false);
       // }

@@ -54,7 +54,7 @@ const SignInPage = () => {
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
             Join Mystery Messsage
           </h1>
-          <p className="mb-4">SignUp to start your anonymous adventure</p>
+          <p className="mb-4">SignIn to start your anonymous adventure</p>
         </div>
 
         <Form {...form}>
@@ -97,7 +97,7 @@ const SignInPage = () => {
           <p className="">
             Not have account?&nbsp;
             <Link
-              href={"/sign-in"}
+              href={"/sign-up"}
               className="text-blue-600 hover:text-blue-800"
             >
               Sign-Up
