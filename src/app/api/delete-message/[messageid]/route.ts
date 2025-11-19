@@ -2,35 +2,35 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/app/model/User";
-import mongoose from "mongoose";
 
-export async function GET(
+export async function DELETE(
   request: Request,
-  { params }: { params: { messageid: string } }
+  context: { params: Promise<{ messageid: string }> }
 ) {
   await dbConnect();
-  const messageId = params.messageid;
+
+  const { messageid } = await context.params;
 
   const session = await getServerSession(authOptions);
   const user = session?.user;
 
-  if (!session || !session.user) {
+  if (!session || !user) {
     return Response.json(
       {
         success: false,
-        messsage: "User not authenticated",
+        message: "User not authenticated",
       },
       { status: 401 }
     );
   }
 
   try {
-    const filteredMessages = await UserModel.updateOne(
-      { _id: user?._id },
-      { $pull: { messages: { _id: messageId } } }
+    const result = await UserModel.updateOne(
+      { _id: user._id },
+      { $pull: { messages: { _id: messageid } } }
     );
 
-    if (filteredMessages.modifiedCount === 0) {
+    if (result.modifiedCount === 0) {
       return Response.json(
         {
           success: false,
@@ -40,19 +40,21 @@ export async function GET(
       );
     }
 
-    Response.json(
+    return Response.json(
       {
         success: true,
         message: "Message deleted successfully",
       },
       { status: 200 }
     );
+
   } catch (error) {
     console.log("Error in delete message route", error);
+
     return Response.json(
       {
         success: false,
-        message: "Error while delete Message",
+        message: "Error deleting message",
       },
       { status: 500 }
     );

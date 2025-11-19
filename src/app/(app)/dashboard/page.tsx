@@ -27,13 +27,13 @@ const DashboardPage = () => {
   });
 
   const { register, watch, setValue } = form;
+
   const acceptMessages = watch("acceptMessages");
 
   const fetchAcceptMessages = useCallback(async () => {
     setIsSwitchLoading(true);
     try {
       const response = await axios.get("/api/accept-messages");
-      console.log("fetchAcceptMessages response", response);
       setValue("acceptMessages", response.data.isAcceptingMessages);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
@@ -51,9 +51,9 @@ const DashboardPage = () => {
         setIsLoading(true);
         setIsSwitchLoading(true);
         true;
-        const response = await axios.get<ApiResponse>("/api/accept-messages");
+        const response = await axios.get<ApiResponse>("/api/get-messages");
         console.log("fetch all Messages-response", response);
-        setMessages(response.data.messages || []);
+        setMessages(response?.data?.messages || []);
         if (refresh) {
           toast.success("Showing latest messages", {
             style: { backgroundColor: "#08CB00", color: "white" },
@@ -83,6 +83,7 @@ const DashboardPage = () => {
       const response = await axios.post<ApiResponse>("/api/accept-messages", {
         acceptMessages: !acceptMessages,
       });
+      // console.log("ACCEPT MESSAGES SENT:", JSON.parse(response.config.data).acceptMessages);
       setValue("acceptMessages", !acceptMessages);
       toast.info("Switch status updated Successfully");
     } catch (error) {
@@ -94,7 +95,7 @@ const DashboardPage = () => {
   };
 
   const handleDeleteMessage = (messageId: string) => {
-    setMessages(messages.filter((message) => message._id !== messageId));
+    setMessages((prev) => prev.filter((msg) => msg._id !== messageId));
   };
 
   if (status === "loading") {
@@ -168,7 +169,7 @@ const DashboardPage = () => {
         {messages.length > 0 ? (
           messages.map((message, index) => (
             <MessageCard
-              key={message.id}
+              key={message._id}
               message={message}
               onMessageDelete={handleDeleteMessage}
             />
